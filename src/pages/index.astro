@@ -1,11 +1,81 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// countdown.astro
+const targetDate = new Date("2025-06-21T07:00:00Z").toISOString();
+// 09:00 MESZ = 07:00 UTC
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Emsel back in Plittersdorf</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #111;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+      }
+      .countdown {
+        font-size: 2rem;
+        display: flex;
+        gap: 1.5rem;
+      }
+      .unit {
+        text-align: center;
+      }
+      .number {
+        font-size: 3.5rem;
+        font-weight: bold;
+      }
+      .label {
+        font-size: 1rem;
+        color: #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Countdown bis zum 21. Juni, 09:00 Uhr</h1>
+    <div class="countdown" id="countdown">
+      <div class="unit"><div class="number" id="days">--</div><div class="label">Tage</div></div>
+      <div class="unit"><div class="number" id="hours">--</div><div class="label">Stunden</div></div>
+      <div class="unit"><div class="number" id="minutes">--</div><div class="label">Minuten</div></div>
+      <div class="unit"><div class="number" id="seconds">--</div><div class="label">Sekunden</div></div>
+    </div>
+
+    <script type="module">
+      const target = new Date("{{targetDate}}").getTime();
+
+      const updateCountdown = () => {
+        const now = new Date().getTime();
+        const distance = target - now;
+
+        if (distance < 0) {
+          document.getElementById("countdown").innerHTML = "<h2>🎉 Der Sommer ist da! 🎉</h2>";
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("days").textContent = String(days).padStart(2, "0");
+        document.getElementById("hours").textContent = String(hours).padStart(2, "0");
+        document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
+        document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
+      };
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    </script>
+  </body>
+</html>
